@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="page-header">Home</h1>
+    <h1 class="page-header">Latest News</h1>
   </div>
 </template>
 
