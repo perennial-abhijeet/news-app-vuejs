@@ -24,9 +24,23 @@ export default {
   },
   methods: {
     ...mapActions(["fetchNews"]),
+    onScroll() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollY + windowHeight >= documentHeight) {
+        this.fetchNews();
+      }
+    },
   },
   mounted() {
     this.fetchNews();
+
+    window.addEventListener("scroll", this.onScroll);
+  },
+  beforeUnmount() {
+    window.removeEventListener("scroll", this.onScroll);
   },
 };
 </script>
