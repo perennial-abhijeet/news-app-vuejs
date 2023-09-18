@@ -6,10 +6,12 @@ const state = {
   news: [],
   pageSize: 21,
   currentPage: 0,
+  selectedCountry: "",
 };
 
 const getters = {
   getNews: (state) => state.news,
+  getSelectedCountry: (state) => state.selectedCountry,
 };
 
 const mutations = {
@@ -19,6 +21,12 @@ const mutations = {
   INCREMENT_PAGE(state) {
     state.currentPage++;
   },
+  RESET_PAGE(state) {
+    state.currentPage = 0;
+  },
+  SET_SELECTED_COUNTRY: (state, countryCode) => {
+    state.selectedCountry = countryCode;
+  },
 };
 
 const actions = {
@@ -26,13 +34,22 @@ const actions = {
     try {
       commit("INCREMENT_PAGE");
       const response = await apiGet(
-        `/everything?q=all&pageSize=${
-          state.pageSize * state.currentPage
-        }&apiKey=${API_KEY_ID}`
+        `/top-headlines?${
+          state.selectedCountry === ""
+            ? "q=all"
+            : "country=" + state.selectedCountry
+        }&pageSize=${state.pageSize * state.currentPage}&apiKey=${API_KEY_ID}`
       );
       commit("SET_NEWS", response.data);
     } catch (error) {
       console.error("Error fetching news:", error);
+    }
+  },
+  resetPage: async ({ commit }) => {
+    try {
+      commit("RESET_PAGE");
+    } catch (error) {
+      console.error("Error resetting the page:", error);
     }
   },
 };
