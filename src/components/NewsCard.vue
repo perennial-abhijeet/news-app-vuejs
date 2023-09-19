@@ -1,6 +1,10 @@
 <template>
   <div class="news-card">
-    <img class="news-image" :src="article.urlToImage" alt="News Image" />
+    <img
+      class="news-image"
+      :src="article.urlToImage || defaultImage"
+      alt="News Image"
+    />
     <div class="news-content">
       <h2 class="news-title">{{ article.title }}</h2>
       <p class="news-description">{{ article.description }}</p>
@@ -14,9 +18,16 @@
 </template>
 
 <script>
+import defaultImage from "@/assets/images/news-default-image.png";
+
 export default {
   props: {
     article: Object,
+  },
+  data() {
+    return {
+      defaultImage: defaultImage,
+    };
   },
   methods: {
     formatDate(dateString) {
