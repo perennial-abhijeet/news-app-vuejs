@@ -1,22 +1,38 @@
 import { createStore } from "vuex";
+import CryptoJS from "crypto-js";
 import { apiGet } from "../axios";
 import { API_KEY_ID } from "../shared/constants";
+
+function createUniqueId(item) {
+  const author = item.author || "Unknown";
+  const title = item.title;
+
+  // Combine author and title
+  const combinedString = `${author}-${title}`;
+
+  // Create a hash of the combined string
+  const hash = CryptoJS.SHA256(combinedString).toString(CryptoJS.enc.Hex);
+
+  return hash;
+}
 
 const state = {
   news: [],
   pageSize: 21,
   currentPage: 0,
   selectedCountry: "",
+  selectedArticle: null,
 };
 
 const getters = {
   getNews: (state) => state.news,
   getSelectedCountry: (state) => state.selectedCountry,
+  getSelectedArticle: (state) => state.selectedArticle,
 };
 
 const mutations = {
   SET_NEWS: (state, newsData) => {
-    state.news = newsData.articles;
+    state.news = newsData;
   },
   INCREMENT_PAGE(state) {
     state.currentPage++;
@@ -26,6 +42,10 @@ const mutations = {
   },
   SET_SELECTED_COUNTRY: (state, countryCode) => {
     state.selectedCountry = countryCode;
+  },
+  SET_SELECTED_ARTICLE(state, article) {
+    state.selectedArticle = article;
+    localStorage.setItem("selectedArticle", JSON.stringify(article));
   },
 };
 
@@ -40,7 +60,11 @@ const actions = {
             : "country=" + state.selectedCountry
         }&pageSize=${state.pageSize * state.currentPage}&apiKey=${API_KEY_ID}`
       );
-      commit("SET_NEWS", response.data);
+      const dataWithId = response.data.articles.map((item) => {
+        let id = createUniqueId(item);
+        return { id: id, ...item };
+      });
+      commit("SET_NEWS", dataWithId);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -50,6 +74,15 @@ const actions = {
       commit("RESET_PAGE");
     } catch (error) {
       console.error("Error resetting the page:", error);
+    }
+  },
+  selectArticle({ commit }, article) {
+    commit("SET_SELECTED_ARTICLE", article);
+  },
+  loadSelectedArticle({ commit }) {
+    const selectedArticle = JSON.parse(localStorage.getItem("selectedArticle"));
+    if (selectedArticle) {
+      commit("SET_SELECTED_ARTICLE", selectedArticle);
     }
   },
 };
