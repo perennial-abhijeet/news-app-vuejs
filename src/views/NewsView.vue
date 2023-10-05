@@ -1,24 +1,8 @@
 <template>
   <div>
-    <h1 class="page-header">Latest News</h1>
-    <div class="country-select">
-      <select
-        id="country"
-        class="select"
-        v-model="selectedCountry"
-        @change="updateSelectedCountry"
-      >
-        <option value="">Select a country</option>
-        <option
-          v-for="country in countries"
-          :key="country.code"
-          :value="country.code"
-        >
-          {{ country.name }}
-        </option>
-      </select>
-    </div>
-    <div class="news-list" v-if="getNews.length">
+    <Filters />
+    <h2 class="page-header">{{ getNews.length }} News Result(s)</h2>
+    <div class="news-grid" v-if="getNews.length">
       <NewsCard
         v-for="article in getNews"
         :key="article.title"
@@ -32,24 +16,19 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import NewsCard from "../components/NewsCard.vue";
-import { COUNTRY_LIST } from "../shared/constants";
+import Filters from "../components/Filters.vue";
 
 export default {
   components: {
     NewsCard,
-  },
-  data() {
-    return {
-      countries: COUNTRY_LIST,
-    };
+    Filters,
   },
   computed: {
-    ...mapGetters(["getNews", "getSelectedCountry"]),
+    ...mapGetters(["getNews"]),
   },
   methods: {
-    ...mapMutations(["SET_SELECTED_COUNTRY", "RESET_PAGE"]),
     ...mapActions(["fetchNews", "resetPage"]),
     onScroll() {
       const scrollY = window.scrollY;
@@ -59,11 +38,6 @@ export default {
       if (scrollY + windowHeight >= documentHeight) {
         this.fetchNews();
       }
-    },
-    updateSelectedCountry() {
-      this.SET_SELECTED_COUNTRY(this.selectedCountry);
-      this.resetPage();
-      this.fetchNews();
     },
   },
   mounted() {
@@ -81,28 +55,6 @@ export default {
   text-align: center;
 }
 
-.news-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-}
-
-.country-select {
-  text-align: right;
-  margin-right: 20px;
-}
-
-.select {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 250px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  background-color: #fff;
-  cursor: pointer;
-}
-
 .no-news {
   display: flex;
   justify-content: center;
@@ -116,31 +68,42 @@ export default {
   margin-top: -200px;
 }
 
-@media (max-width: 865px) {
-  .news-card {
-    width: 100%;
-    margin: 10;
+.news-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+  justify-items: center;
+  padding-bottom: 60px;
+}
+
+.news-card {
+  width: 100%; /* or adjust as needed */
+}
+
+@media (max-width: 1400px) {
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 20px;
+    justify-items: center;
   }
 }
 
-@media (min-width: 866px) {
-  .news-card {
-    width: calc(46% - 20px);
-    margin: 10px;
+@media (max-width: 1024px) {
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    justify-items: center;
   }
 }
 
-@media (min-width: 1400px) {
-  .news-card {
-    width: calc(30% - 20px);
-    margin: 10px;
-  }
-}
-
-@media (min-width: 1716px) {
-  .news-card {
-    width: calc(23% - 20px);
-    margin: 10px;
+@media (max-width: 698px) {
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+    justify-items: center;
   }
 }
 </style>
