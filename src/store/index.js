@@ -22,12 +22,19 @@ const state = {
   currentPage: 0,
   selectedCountry: "",
   selectedArticle: null,
+  bookmarks: [],
 };
 
 const getters = {
   getNews: (state) => state.news,
   getSelectedCountry: (state) => state.selectedCountry,
   getSelectedArticle: (state) => state.selectedArticle,
+  isArticleBookmarked: (state) => (article) => {
+    return state.bookmarks.some((bookmark) => bookmark.id === article.id);
+  },
+  getBookmarks: (state) => {
+    return state.bookmarks;
+  },
 };
 
 const mutations = {
@@ -46,6 +53,17 @@ const mutations = {
   SET_SELECTED_ARTICLE(state, article) {
     state.selectedArticle = article;
     localStorage.setItem("selectedArticle", JSON.stringify(article));
+  },
+  ADD_BOOKMARK: (state, article) => {
+    state.bookmarks.push(article);
+  },
+  REMOVE_BOOKMARK: (state, article) => {
+    const index = state.bookmarks.findIndex(
+      (bookmark) => bookmark.id === article.id
+    );
+    if (index !== -1) {
+      state.bookmarks.splice(index, 1);
+    }
   },
 };
 
@@ -83,6 +101,13 @@ const actions = {
     const selectedArticle = JSON.parse(localStorage.getItem("selectedArticle"));
     if (selectedArticle) {
       commit("SET_SELECTED_ARTICLE", selectedArticle);
+    }
+  },
+  toggleBookmarkArticle({ commit, getters }, article) {
+    if (getters.isArticleBookmarked(article)) {
+      commit("REMOVE_BOOKMARK", article);
+    } else {
+      commit("ADD_BOOKMARK", article);
     }
   },
 };

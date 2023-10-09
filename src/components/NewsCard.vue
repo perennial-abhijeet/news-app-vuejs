@@ -14,9 +14,17 @@
         }}</a>
         <p class="news-description">{{ article.description }}</p>
       </div>
-      <button class="go-to-page-link" @click="goToSingleNewsPage">
-        Go to Page
-      </button>
+      <div class="btn-section">
+        <button class="go-to-page-link" @click="goToSingleNewsPage">
+          Go to Page
+        </button>
+        <img
+          :src="isBookmark ? bookmarkFilledIcon : bookmarkIcon"
+          alt="News Image"
+          class="bookmark-icon"
+          @click="toggleIcons"
+        />
+      </div>
       <div class="date-container">
         <p class="news-date">
           Published: {{ formatDate(article.publishedAt) }}
@@ -29,6 +37,8 @@
 <script>
 import { mapMutations, mapActions } from "vuex";
 import defaultImage from "@/assets/images/news-default-image.png";
+import bookmarkIcon from "@/assets/images/bookmark.png";
+import bookmarkFilledIcon from "@/assets/images/bookmark-filled.png";
 
 export default {
   props: {
@@ -37,20 +47,30 @@ export default {
   data() {
     return {
       defaultImage: defaultImage,
+      isBookmark: false,
+      bookmarkIcon,
+      bookmarkFilledIcon,
     };
   },
   methods: {
     ...mapMutations(["SET_SELECTED_ARTICLE"]),
-    ...mapActions(["selectArticle"]),
+    ...mapActions(["selectArticle", "toggleBookmarkArticle"]),
     formatDate(dateString) {
       return new Date(dateString).toLocaleDateString();
     },
     async goToSingleNewsPage() {
-      // this.SET_SELECTED_ARTICLE(this.article);
       await this.selectArticle(this.article);
       this.$router.push({
         name: "single-news",
       });
+    },
+    toggleIcons() {
+      this.toggleBookmarkArticle(this.article);
+    },
+  },
+  computed: {
+    isBookmark() {
+      return this.$store.getters.isArticleBookmarked(this.article);
     },
   },
 };
@@ -127,6 +147,13 @@ export default {
   font-weight: bold;
 }
 
+.btn-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px;
+}
+
 .go-to-page-link {
   background-color: #343940;
   height: 40px;
@@ -135,7 +162,12 @@ export default {
   color: #fff;
   font-size: 15px;
   border: none;
-  margin: 16px;
+  cursor: pointer;
+}
+
+.bookmark-icon {
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 }
 </style>

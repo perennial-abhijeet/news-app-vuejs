@@ -8,7 +8,6 @@ export default {
     Header,
   },
   created() {
-    // Dispatch the action to load the selected article
     this.loadSelectedArticle();
   },
   methods: {
@@ -29,6 +28,7 @@ export default {
 <style scoped>
 .app-container {
   background-color: #cccccc;
+  min-height: 100vh;
 }
 .container {
   max-width: 85%;
