@@ -14,6 +14,12 @@ const router = createRouter({
       component: () => import("../views/SingleNewsView.vue"),
       props: true,
     },
+    {
+      path: "/bookmarks",
+      name: "bookmarks",
+      component: () => import("../views/BookmarksView.vue"),
+      props: true,
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

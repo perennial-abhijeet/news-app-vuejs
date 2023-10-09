@@ -1,10 +1,9 @@
 <template>
   <div>
-    <Filters />
-    <h2 class="page-header">{{ getNews.length }} News Result(s)</h2>
-    <div class="news-grid" v-if="getNews.length">
+    <h2 class="page-header">{{ bookmarks.length }} News Result(s)</h2>
+    <div class="news-grid" v-if="bookmarks.length">
       <NewsCard
-        v-for="article in getNews"
+        v-for="article in bookmarks"
         :key="article.title"
         :article="article"
       />
@@ -18,34 +17,23 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import NewsCard from "../components/NewsCard.vue";
-import Filters from "../components/Filters.vue";
 
 export default {
   components: {
     NewsCard,
-    Filters,
   },
   computed: {
-    ...mapGetters(["getNews"]),
-  },
-  methods: {
-    ...mapActions(["fetchNews", "resetPage"]),
-    onScroll() {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      if (scrollY + windowHeight >= documentHeight) {
-        this.fetchNews();
-      }
+    ...mapGetters(["getBookmarks"]),
+    bookmarks() {
+      return this.getBookmarks;
     },
   },
-  mounted() {
-    this.fetchNews();
-    window.addEventListener("scroll", this.onScroll);
-  },
-  beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll);
+  methods: {
+    ...mapActions(["toggleBookmarkArticle"]),
+    removeBookmark(article) {
+      // Toggle the bookmark status to remove it from bookmarks
+      this.toggleBookmarkArticle(article);
+    },
   },
 };
 </script>
