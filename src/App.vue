@@ -25,12 +25,13 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style>
 .app-container {
   background-color: #cccccc;
   min-height: 100vh;
 }
-.container {
+
+.page-container {
   max-width: 85%;
   margin: auto;
 }

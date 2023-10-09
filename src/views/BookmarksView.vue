@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-container">
     <h2 class="page-header">{{ bookmarks.length }} News Result(s)</h2>
     <div class="news-grid" v-if="bookmarks.length">
       <NewsCard
