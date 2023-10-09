@@ -16,6 +16,13 @@
           {{ country.name }}
         </option>
       </select>
+      <input
+        :value="filterText"
+        type="text"
+        placeholder="Search by title"
+        class="select"
+        @input="$emit('update-filter-text', $event.target.value)"
+      />
     </div>
   </header>
 </template>
@@ -30,6 +37,9 @@ export default {
       countries: COUNTRY_LIST,
       selectedCountry: "",
     };
+  },
+  props: {
+    filterText: String,
   },
   computed: {
     ...mapGetters(["getSelectedCountry"]),
@@ -67,7 +77,7 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 250px;
-  margin: 20px 0;
+  margin: 20px 10px;
   background-color: #fff;
   cursor: pointer;
 }
