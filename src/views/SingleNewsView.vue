@@ -1,5 +1,5 @@
 <template>
-  <div class="single-news-page">
+  <div class="single-news-page page-container">
     <div class="single-news-content">
       <h1 class="news-title">{{ getSelectedArticle.title }}</h1>
       <img

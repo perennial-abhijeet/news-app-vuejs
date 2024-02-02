@@ -2,7 +2,7 @@
   <div>
     <Filters :filter-text="filterText" @update-filter-text="updateFilterText" />
     <div class="page-container">
-      <h2 class="page-header">{{ filteredNews.length }} News Result(s)</h2>
+      <h2 class="page-header">{{ getTotalResults }} News Result(s)</h2>
       <div class="news-grid" v-if="filteredNews.length">
         <NewsCard
           v-for="article in filteredNews"
@@ -33,7 +33,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getNews"]),
+    ...mapGetters(["getNews", "getTotalResults"]),
     filteredNews() {
       if (this.filterText !== "") {
         return this.getNews.filter((article) =>
