@@ -18,6 +18,7 @@ function createUniqueId(item) {
 
 const state = {
   news: [],
+  totalResults: 0,
   pageSize: 21,
   currentPage: 0,
   selectedCountry: "",
@@ -27,6 +28,7 @@ const state = {
 
 const getters = {
   getNews: (state) => state.news,
+  getTotalResults: (state) => state.totalResults,
   getSelectedCountry: (state) => state.selectedCountry,
   getSelectedArticle: (state) => state.selectedArticle,
   isArticleBookmarked: (state) => (article) => {
@@ -40,6 +42,9 @@ const getters = {
 const mutations = {
   SET_NEWS: (state, newsData) => {
     state.news = newsData;
+  },
+  SET_TOTAL_RESULTS: (state, count) => {
+    state.totalResults = count;
   },
   INCREMENT_PAGE(state) {
     state.currentPage++;
@@ -56,6 +61,7 @@ const mutations = {
   },
   ADD_BOOKMARK: (state, article) => {
     state.bookmarks.push(article);
+    localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
   },
   REMOVE_BOOKMARK: (state, article) => {
     const index = state.bookmarks.findIndex(
@@ -63,6 +69,7 @@ const mutations = {
     );
     if (index !== -1) {
       state.bookmarks.splice(index, 1);
+      localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
     }
   },
 };
@@ -83,6 +90,7 @@ const actions = {
         return { id: id, ...item };
       });
       commit("SET_NEWS", dataWithId);
+      commit("SET_TOTAL_RESULTS", response.data.totalResults);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -110,6 +118,14 @@ const actions = {
       commit("ADD_BOOKMARK", article);
     }
   },
+  loadBookmarks({ commit }) {
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarks")) || [];
+    commit("SET_BOOKMARKS", bookmarks);
+  },
+};
+
+mutations.SET_BOOKMARKS = (state, bookmarks) => {
+  state.bookmarks = bookmarks;
 };
 
 const store = createStore({

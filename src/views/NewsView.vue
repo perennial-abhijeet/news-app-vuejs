@@ -1,16 +1,18 @@
 <template>
   <div>
-    <Filters />
-    <h2 class="page-header">{{ getNews.length }} News Result(s)</h2>
-    <div class="news-grid" v-if="getNews.length">
-      <NewsCard
-        v-for="article in getNews"
-        :key="article.title"
-        :article="article"
-      />
-    </div>
-    <div v-else class="no-news">
-      <h3>No news found.</h3>
+    <Filters :filter-text="filterText" @update-filter-text="updateFilterText" />
+    <div class="page-container">
+      <h2 class="page-header">{{ getTotalResults }} News Result(s)</h2>
+      <div class="news-grid" v-if="filteredNews.length">
+        <NewsCard
+          v-for="article in filteredNews"
+          :key="article.title"
+          :article="article"
+        />
+      </div>
+      <div v-else class="no-news">
+        <h3>No news found.</h3>
+      </div>
     </div>
   </div>
 </template>
@@ -25,8 +27,22 @@ export default {
     NewsCard,
     Filters,
   },
+  data() {
+    return {
+      filterText: "", // Initialize filter text
+    };
+  },
   computed: {
-    ...mapGetters(["getNews"]),
+    ...mapGetters(["getNews", "getTotalResults"]),
+    filteredNews() {
+      if (this.filterText !== "") {
+        return this.getNews.filter((article) =>
+          article.title.toLowerCase().includes(this.filterText.toLowerCase())
+        );
+      } else {
+        return this.getNews;
+      }
+    },
   },
   methods: {
     ...mapActions(["fetchNews", "resetPage"]),
@@ -38,6 +54,9 @@ export default {
       if (scrollY + windowHeight >= documentHeight) {
         this.fetchNews();
       }
+    },
+    updateFilterText(text) {
+      this.filterText = text;
     },
   },
   mounted() {
