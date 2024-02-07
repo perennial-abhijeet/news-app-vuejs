@@ -18,7 +18,7 @@
         </div>
         <p class="news-description">{{ getSelectedArticle.description }}</p>
         <p class="news-content-text">{{ getSelectedArticle.content }}</p>
-        <a :href="getSelectedArticle.url" target="_blank">Read more</a>
+        <a :href="getSelectedArticle.url" target="_blank" class="news-url">Read more</a>
       </div>
     </div>
   </div>
